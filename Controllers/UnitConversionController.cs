@@ -24,15 +24,18 @@ namespace UnitConversionAPI.Controllers
         public async Task<ActionResult<UnitConversionResponse>> Convert(UnitConversionRequest request)
         {
             var errors = _validationService.Validate(request);
-            if(errors.Count > 0)
+            if (errors.Count >0)
             {
-                return BadRequest(new UnitConversionResponse
-                {
-                    Errors = errors
-                });
+                return BadRequest(new UnitConversionResponse { Errors = errors });
             }
-            double convertedValue = _unitConversionService.Convert(request.MeasurementType, request.From, request.To, request.Value);
-            return new UnitConversionResponse() { Value = convertedValue };
+
+            var conversion = _unitConversionService.Convert(request.MeasurementType, request.From, request.To, request.Value);
+            if (conversion.Errors.Count >0)
+            {
+                return BadRequest(new UnitConversionResponse { Errors = conversion.Errors });
+            }
+
+            return new UnitConversionResponse { Value = conversion.Value ?? 0 };
         }
     }
 }

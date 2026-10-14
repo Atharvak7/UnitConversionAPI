@@ -2,18 +2,20 @@ using UnitConversionAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IUnitStore, InMemoryUnitStore>();
+builder.Services.AddSingleton<IUnitConverter, LinearConverter>();
+builder.Services.AddSingleton<IUnitConverter, TemperatureConverter>();
+builder.Services.AddSingleton<ConverterRegistry>();
+
 builder.Services.AddScoped<UnitConversionService>();
 builder.Services.AddScoped<ValidationService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
